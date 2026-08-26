@@ -21,7 +21,7 @@ export class SpotService {
   async findOne(id: string): Promise<Spot> {
     const spot = await this.spotRepository.findOneBy({ id });
     if (!spot) {
-      throw new NotFoundException('Categoria não encontrada');
+      throw new NotFoundException('Spot não encontrado');
     }
     return spot;
   }
