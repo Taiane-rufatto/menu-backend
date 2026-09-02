@@ -10,35 +10,35 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Category } from './category.entity';
-import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category';
-import { UpdateCategoryDto } from './dto/update-category';
+import { Product } from './product.entity';
+import { ProductService } from './product.service';
+import { CreateProductDto } from './dto/create-product';
+import { UpdateProductDto } from './dto/update-product';
 
-@Controller('categories')
-export class CategoryController {
-  constructor(private readonly service: CategoryService) {}
+@Controller('products')
+export class ProductController {
+  constructor(private readonly service: ProductService) {}
 
   @Get()
-  findAll(): Promise<Category[]> {
+  findAll(): Promise<Product[]> {
     return this.service.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Category> {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Product> {
     return this.service.findOne(id);
   }
 
   @Post()
-  create(@Body() dto: CreateCategoryDto): Promise<Category> {
+  create(@Body() dto: CreateProductDto): Promise<Product> {
     return this.service.create(dto);
   }
 
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateCategoryDto,
-  ): Promise<Category> {
+    @Body() dto: UpdateProductDto,
+  ): Promise<Product> {
     return this.service.update(id, dto);
   }
 
