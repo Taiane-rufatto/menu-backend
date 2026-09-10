@@ -27,7 +27,9 @@ export class Order{
     @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.NEW }) // indica que esse campo é uma coluna da tabela, e que o tipo dela é um enum, e que o valor padrão é 'NEW'
     status: OrderStatus; // Isso é um enum, que é um tipo de dado que pode ter um conjunto limitado de valores, e nesse caso, os valores são os status do pedido.
     
-    @OneToMany(() => OrderItem, (item) => item.order) // indica que esse campo é uma relação um-para-muitos com a entidade OrderItem, e que o campo 'order' da entidade OrderItem é o lado inverso da relação
+    @OneToMany(() => OrderItem, (item) => item.order, {
+        cascade: true
+    })  
     items: OrderItem[]; // Isso é um array de OrderItem, que é uma classe que representa um item do pedido. Cada item tem um produto, uma quantidade e um preço.
 
 }

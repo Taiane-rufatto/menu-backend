@@ -8,7 +8,7 @@ export class OrderItem{
     @PrimaryGeneratedColumn('uuid') // isso é uma anotação do TypeORM que indica que esse campo é a chave primária da tabela, e que o valor será gerado automaticamente como um UUID
     id: string; //id do item do pedido
 
-    @ManyToOne(() => Order, { nullable: false, onDelete: 'CASCADE' }) // indica que esse campo é uma relação muitos-para-um com a entidade Order, e que não pode ser nulo e o onDelete: 'CASCADE' indica que se o pedido for deletado, todos os itens do pedido também serão deletados
+    @ManyToOne(() => Order, { nullable: false}) // indica que esse campo é uma relação muitos-para-um com a entidade Order, e que não pode ser nulo e o onDelete: 'CASCADE' indica que se o pedido for deletado, todos os itens do pedido também serão deletados
     @JoinColumn({ name: 'order_id' }) // indica que o nome da coluna que vai armazenar o id do pedido na tabela order_item é 'order_id'
     order: Order; //pedido do item do pedido, isso faz referencia a instancia alocada na memoria, e nao ao id do pedido, que é um campo da tabela inteira
 
