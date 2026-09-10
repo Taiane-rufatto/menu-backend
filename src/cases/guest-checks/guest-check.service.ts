@@ -67,10 +67,29 @@ export class GuestCheckService {
 
 
     //Se chegou até aqui, deu certo.
-    guestCheck.status = GuestCheckStatus.CLOSED;
+    guestCheck.status = GuestCheckStatus.CLOSED; 
 
     return this.guestCheckRepository.save(guestCheck);
 
   }
 
+  findOpenedBySpotId(spotId: string): Promise<GuestCheck | null>{
+    return this.guestCheckRepository.findOne({
+      where: {
+        spot: { id: spotId},
+        status: GuestCheckStatus.OPENED
+      },
+      relations: { spot: true}
+    })
+  }
+
+  async findOrcCreateOpened(spotId: string): Promise<GuestCheck> {
+    const opened = await this.findOpenedBySpotId(spotId);
+
+    if (opened) {
+      return opened;
+    }
+
+    return this.create({ spotId})
+  }
 }
