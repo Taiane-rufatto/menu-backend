@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateOrderDto, CreateOrderItemDto } from "./dto/create-order";
 import { Order, OrderStatus } from "./entities/order-entity";
 import { GuestCheckService } from "../guest-checks/guest-check.service";
@@ -6,6 +6,7 @@ import { OrderItem } from "./entities/order-item-entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductService } from "../products/product.service";
+import { UpdateOrderStatusDto } from "./dto/update-order-status";
 
 @Injectable() // aqui estamos dizendo que a classe OrderService é um serviço do NestJS, e que pode ser injetada em outros lugares do código, como por exemplo em um controller.
 export class OrderService { // aqui estamos dizendo que a classe OrderService é um serviço do NestJS, e que pode ser injetada em outros lugares do código, como por exemplo em um controller.
@@ -28,6 +29,7 @@ export class OrderService { // aqui estamos dizendo que a classe OrderService é
         return this.orderItemRepository.create({
             product,
             quantity: dto.quantity,
+            price: product.price,
             subtotal
         });
     }
@@ -61,4 +63,44 @@ export class OrderService { // aqui estamos dizendo que a classe OrderService é
         return this.orderRepository.save(order);
     } 
 
+    findAll(): Promise<Order[]>{
+         return this.orderRepository.find({
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+    async findOne(id: string): Promise<Order> {
+        const order = await this.orderRepository.findOneBy({ id });
+
+        if (!order) {
+          throw new NotFoundException('Pedido não encontrad0');
+        }
+
+        return order; 
+
+    }
+
+    async updateStatus(id: string, dto: UpdateOrderStatusDto): Promise<Order> {
+
+        const order = await this.findOne(id);
+
+        // Determino a sequência obrigatório de mudanças de status 
+        const nextStatus: Record<OrderStatus, OrderStatus | undefined> = {
+            [OrderStatus.NEW]: OrderStatus.PREPARING,
+            [OrderStatus.PREPARING]: OrderStatus.READY,
+            [OrderStatus.READY]: OrderStatus.DELIVERY,
+            [OrderStatus. DELIVERY]: undefined
+        }
+
+        //verifico se o client est[a enviando um status válido
+        if (nextStatus[dto.status] !== dto.status) {
+            throw new BadRequestException ('Status Inválido');
+        }
+
+        //forço a mudança de status
+        order.status = dto.status
+
+        // gravo a alteração no banco
+        return this.orderRepository.save(order); 
+    }
 }
