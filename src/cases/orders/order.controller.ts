@@ -11,12 +11,12 @@ export class OrderController {
         private readonly service: OrderService
     ){}
 
-    @Post()
+    @Post() //
     create(@Body() dto: CreateOrderDto): Promise<Order>{
         return this.service.create(dto);
     }
 
-    @Get()
+    @Get() // aqui estamos dizendo que a rota '/orders' é uma rota GET, e que ela retorna uma lista de todos os pedidos
     findAll(): Promise<Order[]>{
         return this.service.findAll();
     }
