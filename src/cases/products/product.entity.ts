@@ -27,6 +27,14 @@ export class Product {
   @Column({ type: 'text', nullable: true })
   picture?: string;
 
+  // indica se o produto é vegetariano
+  @Column({ type: 'boolean', default: false })
+  vegetarian: boolean;
+
+  // indica se o produto é uma novidade no cardápio
+  @Column({ name: 'is_new', type: 'boolean', default: false })
+  isNew: boolean;
+
   @ManyToOne(() => Category, { nullable: true })
   @JoinColumn({ name: 'category_id' })
   category: Category | null;

@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Product } from './product.entity';
 import { ProductService } from './product.service';
@@ -19,9 +20,10 @@ import { UpdateProductDto } from './dto/update-product';
 export class ProductController {
   constructor(private readonly service: ProductService) {}
 
+  // GET /products ou GET /products?categoryId=...
   @Get()
-  findAll(): Promise<Product[]> {
-    return this.service.findAll();
+  findAll(@Query('categoryId') categoryId?: string): Promise<Product[]> {
+    return this.service.findAll(categoryId);
   }
 
   @Get(':id')

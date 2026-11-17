@@ -27,4 +27,12 @@ export class CreateProductDto {
   // eslint-disable-next-line prettier/prettier
   @IsUrl({ require_protocol: true})
   picture?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  vegetarian?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isNew?: boolean;
 }

@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 
 export class UpdateProductDto {
-  
+  @IsOptional()
   @IsString()
    @IsNotEmpty()
    @MaxLength(60)
@@ -21,6 +21,7 @@ export class UpdateProductDto {
    @IsString()
    description?: string;
  
+   @IsOptional()
    @IsNumber({ maxDecimalPlaces: 2 })
    @Min(0)
    price?: number;
@@ -37,6 +38,12 @@ export class UpdateProductDto {
    // eslint-disable-next-line prettier/prettier
    @IsUrl({ require_protocol: true})
    picture?: string;
- 
-  }
- 
+
+  @IsOptional()
+  @IsBoolean()
+  vegetarian?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isNew?: boolean;
+}
