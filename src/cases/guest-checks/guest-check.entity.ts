@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Spot } from '../spots/spot.entity';
+import { Order } from '../orders/entities/order-entity';
 
 export enum GuestCheckStatus {
   OPENED = 'OPENED',
@@ -24,6 +25,10 @@ export class GuestCheck {
   @ManyToOne(() => Spot, { nullable: false }) // aqui estamos dizendo que a coluna 'spot' é uma coluna da tabela 'guest_check', e que o tipo dela é uma entidade, e que a entidade é a classe Spot, e que a coluna 'spot_id' é a coluna da tabela 'spot' que está vinculada a 'guest_check'
   @JoinColumn({ name: 'spot_id' })
   spot: Spot;
+
+  // lado inverso da relação: uma comanda tem vários pedidos (a chave estrangeira fica na tabela order)
+  @OneToMany(() => Order, (order) => order.guestCheck)
+  orders: Order[];
 }
 
 //resumindo: nesse arquivo estamos dizendo que a classe GuestCheck é uma entidade, e que ela é uma tabela no banco de dados, e que o nome da tabela é 'guest_check', e que a coluna 'created_at' é uma coluna da tabela 'guest_check', e que o valor dela será gerado automaticamente como a data e hora atual, e o nome da coluna será 'created_at', e que a coluna 'status' é uma coluna da tabela 'guest_check', e que o tipo dela é um enum, e que o valor padrão é 'OPENED', e que a coluna 'spot' é uma coluna da tabela 'guest_check', e que o tipo dela é uma entidade, e que a entidade é a classe Spot, e que a coluna 'spot_id' é a coluna da tabela 'spot' que está vinculada a 'guest_check'

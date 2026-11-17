@@ -45,8 +45,20 @@ export class GuestCheckService {
     return this.guestCheckRepository.save(guestCheck);
   }
 
+  // lista as comandas; se receber o status, filtra (ex.: só as OPENED)
+  findAll(status?: GuestCheckStatus): Promise<GuestCheck[]> {
+    return this.guestCheckRepository.find({
+      where: status ? { status } : {},
+      relations: { spot: true, orders: { items: { product: true } } },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
    async findOne(id: string): Promise<GuestCheck> {
-      const guestCheck = await this.guestCheckRepository.findOneBy({ id });
+      const guestCheck = await this.guestCheckRepository.findOne({
+        where: { id },
+        relations: { spot: true, orders: { items: { product: true } } },
+      });
       
       if (!guestCheck) {
         throw new NotFoundException('Comanda não encontrada');
