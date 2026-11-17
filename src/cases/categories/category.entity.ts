@@ -11,6 +11,10 @@ export class Category {
   @Column({ type: 'text', nullable: true })
   icon: string;
 
+  // ordem em que a categoria aparece no cardápio (menor número aparece primeiro)
+  @Column({ name: 'display_order', type: 'integer', default: 0 })
+  displayOrder: number;
+
   @Column({ type: 'boolean', default: true })
   active: boolean;
 }

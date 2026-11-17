@@ -15,7 +15,7 @@ export class CategoryService {
 
   findAll(): Promise<Category[]> {
     return this.categoryRepository.find({
-      order: { name: 'ASC' },
+      order: { displayOrder: 'ASC', name: 'ASC' },
     });
   }
 
@@ -35,7 +35,7 @@ export class CategoryService {
       ...dto,
   
       name: dto.name,
-      active: true,
+      active: dto.active ?? true,
     });
     return this.categoryRepository.save(category);
   }
@@ -49,6 +49,14 @@ export class CategoryService {
       category.name = dto.name;
     }
   
+    if (dto.icon !== undefined) {
+      category.icon = dto.icon;
+    }
+
+    if (dto.displayOrder !== undefined) {
+      category.displayOrder = dto.displayOrder;
+    }
+
     if (dto.active !== undefined) {
      
       category.active = dto.active;
