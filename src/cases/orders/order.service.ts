@@ -90,7 +90,6 @@ export class OrderService { // aqui estamos dizendo que a classe OrderService é
         const order = await this.findOne(id);
 
         // As transições são livres: qualquer status pode ir para qualquer outro.
-        // A validação de que o status existe no enum é feita no UpdateOrderStatusDto (@IsEnum).
 
         //forço a mudança de status
         order.status = dto.status
