@@ -20,9 +20,11 @@ import { UpdateProductDto } from './dto/update-product';
 export class ProductController {
   constructor(private readonly service: ProductService) {}
 
-  // GET /products ou GET /products?categoryId=...
   @Get()
-  findAll(@Query('categoryId') categoryId?: string): Promise<Product[]> {
+  findAll(
+    @Query('categoryId', new ParseUUIDPipe({optional:true}))
+    categoryId?: string
+  ): Promise<Product[]> {
     return this.service.findAll(categoryId);
   }
 
@@ -38,13 +40,15 @@ export class ProductController {
 
   @Patch(':id')
   update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateProductDto,
+    @Param('id', ParseUUIDPipe)
+    id: string,
+    @Body()
+    dto: UpdateProductDto,
   ): Promise<Product> {
     return this.service.update(id, dto);
   }
 
-  @Delete(':id')
+  @Delete('id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.service.remove(id);

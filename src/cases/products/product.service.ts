@@ -3,9 +3,8 @@ import { Product } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product';
-import { Category } from '../categories/category.entity';
 import { UpdateProductDto } from './dto/update-product';
-
+import { Category } from '../categories/category.entity';
 
 @Injectable()
 export class ProductService {
@@ -16,12 +15,13 @@ export class ProductService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
   ) {}
-  
 
-  // se receber o categoryId, devolve só os produtos daquela categoria
   findAll(categoryId?: string): Promise<Product[]> {
     return this.productRepository.find({
-      where: categoryId ? { category: { id: categoryId } } : {},
+      where: {
+        active: true,
+        ...(categoryId && { category: { id: categoryId } }),
+      },
       order: { name: 'ASC' },
       relations: { category: true },
     });
@@ -32,6 +32,7 @@ export class ProductService {
       where: { id },
       relations: { category: true },
     });
+
     if (!product) {
       throw new NotFoundException('Produto não encontrado!');
     }
@@ -40,19 +41,19 @@ export class ProductService {
   }
 
   async create(dto: CreateProductDto): Promise<Product> {
-
-    const category = dto.categoryId ? await this.getActiveCategory(dto.categoryId) : null;
-
+    const category = dto.categoryId
+      ? await this.getActiveCategory(dto.categoryId)
+      : null;
     const product = this.productRepository.create({
+      ...dto,
       name: dto.name.trim(),
       description: dto.description,
       price: dto.price,
       picture: dto.picture,
-      active: dto.active ?? true,
-      vegetarian: dto.vegetarian ?? false,
-      isNew: dto.isNew ?? false,
-      category
+      active: true,
+      category,
     });
+
     return this.productRepository.save(product);
   }
 
@@ -79,16 +80,10 @@ export class ProductService {
       product.active = dto.active;
     }
 
-    if (dto.vegetarian !== undefined) {
-      product.vegetarian = dto.vegetarian;
-    }
-
-    if (dto.isNew !== undefined) {
-      product.isNew = dto.isNew;
-    }
-
-    if (dto.categoryId !== undefined){
-      product.category = dto.categoryId ? await this.getActiveCategory(dto.categoryId) : null;
+    if (dto.categoryId !== undefined) {
+      product.category = dto.categoryId
+        ? await this.getActiveCategory(dto.categoryId)
+        : null;
     }
 
     return this.productRepository.save(product);
@@ -96,20 +91,20 @@ export class ProductService {
 
   async remove(id: string): Promise<void> {
     const product = await this.findOne(id);
+
     await this.productRepository.remove(product);
   }
 
   private async getActiveCategory(id: string): Promise<Category> {
-    const category = await this.categoryRepository.findOneBy({ 
+    const category = await this.categoryRepository.findOneBy({
       id,
       active: true,
-     })
+    });
 
-     if (!category) {
-      throw new NotFoundException('Nenhuma categoria ativa foi encontrada!')
-     }
-
-     return category;
-
+    if (!category) {
+      throw new NotFoundException('Nenhuma categoria ativa foi encontrada');
     }
+
+    return category;
+  }
 }
